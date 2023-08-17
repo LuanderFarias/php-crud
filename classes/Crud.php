@@ -43,4 +43,41 @@
             $stmt->execute();
             return $stmt;
         }
+
+        // Update
+        public function update($postValues) {
+            $id = $postValues['id'];
+            $model = $postValues['model'];
+            $brand = $postValues['brand'];
+            $licenseplate = $postValues['licenseplate'];
+            $color = $postValues['color'];
+            $year = $postValues['year'];
+
+            if(empty($id) || empty($model) || empty($brand) || empty($licenseplate) || empty($color) || empty($year)) {
+                return false;
+            }
+
+            $query = "UPDATE" . $this->table_name . " SET  model = ?, SET  brand = ?, SET  licenseplate = ?, SET  color = ?, SET year = ? WHERE id = ?";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(1, $model);
+            $stmt->bindParam(2, $brand);
+            $stmt->bindParam(3, $licenseplate);
+            $stmt->bindParam(4, $color);
+            $stmt->bindParam(5, $year);
+            $stmt->bindParam(6, $id);
+            if($stmt->execute()){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        // ReadOne
+        public function readOne($id) {
+            $query = "SELECT * FROM " . $this->table_name . " WHERE id = ?";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(1, $id);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        }
     }

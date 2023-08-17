@@ -99,6 +99,36 @@
     </style>
 </head>
 <body>
+    <?php
+        if(isset($_GET['action']) && $_GET['action'] == 'update' && isset($_GET['id'])){
+            $id = $_GET['id'];
+            $result = $crud->readOne($id);
+
+            if($result){
+                echo "Register not found.";
+                exit();
+            }
+
+            $model = $result['model'];
+            $brand = $result['brand'];
+            $licenseplate = $result['licenseplate'];
+            $color = $result['color'];
+            $year = $result['year'];
+        
+    ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
     <form action="?action=create" method="POST">
         <label for="model">Model</label>
         <input type="text" name="model">
@@ -125,17 +155,28 @@
             <td>License Plate</td>
             <td>Color</td>
             <td>Year</td>
+            <td>Ações</td>
         </tr>
         <?php
-            while ($row = $rows->fetch(PDO::FETCH_ASSOC)) {
+            if($rows->rowCount() == 0){
                 echo "<tr>";
-                echo "<td>" . $row['id'] . "</td>";
-                echo "<td>" . $row['model'] . "</td>";
-                echo "<td>" . $row['brand'] . "</td>";
-                echo "<td>" . $row['licenseplate'] . "</td>";
-                echo "<td>" . $row['color'] . "</td>";
-                echo "<td>" . $row['year'] . "</td>";
+                echo "<td colspan='7'>No data found</td>";
                 echo "</tr>";
+            } else {
+                while($row = $rows->fetch(PDO::FETCH_ASSOC)){
+                    echo "<tr>";
+                    echo "<td>" . $row['id'] . "</td>";
+                    echo "<td>" . $row['model'] . "</td>";
+                    echo "<td>" . $row['brand'] . "</td>";
+                    echo "<td>" . $row['licenseplate'] . "</td>";
+                    echo "<td>" . $row['color'] . "</td>";
+                    echo "<td>" . $row['year'] . "</td>";
+                    echo "<td>";
+                    echo "<a href='?action=update&id=" . $row['id'] . "'>Update</a>";
+                    echo "<a href='?action=delete&id=" . $row['id'] . "' onclick='return confirm(\"Do you really wanna delete this registry?\")' class='delete'>Delete</a>";
+                    echo "</td>";
+                    echo "</tr>";
+                }
             }
         ?>
     </table>
