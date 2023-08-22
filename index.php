@@ -6,8 +6,8 @@
     $db = $database->getConnection();
     $crud = new Crud($db);
 
-    if(isset($_GET['action'])){
-        switch($_GET['action']){
+    if (isset($_GET['action'])) {
+        switch ($_GET['action']) {
             case 'create':
                 $crud->create($_POST);
                 $rows = $crud->read();
@@ -15,8 +15,16 @@
             case 'read':
                 $rows = $crud->read();
                 break;
-            // case 'update':
-            // case 'delete':
+            case 'update':
+                if(isset($_POST['id'])){
+                    $crud->update($_POST);
+                }
+                $rows = $crud->read();
+                break;
+            case 'delete':
+                $crud->delete($_GET['id']);
+                $rows = $crud->read();
+                break;
             default:
                 $rows = $crud->read();
                 break;
@@ -101,52 +109,59 @@
 <body>
     <?php
         if(isset($_GET['action']) && $_GET['action'] == 'update' && isset($_GET['id'])){
-            $id = $_GET['id'];
-            $result = $crud->readOne($id);
-
-            if($result){
-                echo "Register not found.";
-                exit();
-            }
-
-            $model = $result['model'];
-            $brand = $result['brand'];
-            $licenseplate = $result['licenseplate'];
-            $color = $result['color'];
-            $year = $result['year'];
-        
+        $id = $_GET['id'];
+        $result =$crud->readOne($id);
+        if(!$result){
+            echo "Register not found";
+            exit();
+        }
+        $model = $result['model'];
+        $brand = $result['brand'];
+        $licenseplate = $result['licenseplate'];
+        $color = $result['color'];
+        $year = $result['year'];
     ?>
 
-
-
-
-
-
-
-
-
-
-
-
-
-    <form action="?action=create" method="POST">
+    <form action="?action=update" method="post">
+        <input type="hidden" name="id" value="<?php echo $id ?>">
         <label for="model">Model</label>
-        <input type="text" name="model">
-
+        <input type="text" name="model" value="<?php echo $model ?>">
         <label for="brand">Brand</label>
-        <input type="text" name="brand">
-
+        <input type="text" name="brand" value="<?php echo $brand ?>">
         <label for="licenseplate">License Plate</label>
-        <input type="text" name="licenseplate">
-
+        <input type="text" name="licenseplate" value="<?php echo $licenseplate ?>">
         <label for="color">Color</label>
-        <input type="text" name="color">
-
+        <input type="text" name="color" value="<?php echo $color ?>">
         <label for="year">Year</label>
-        <input type="text" name="year">
-
-        <input type="submit" value="Register" name="send">
+        <input type="text" name="year" value="<?php echo $year ?>">
+        <input type="submit" value="update" name="send" onclick="return confirm('Are you sure you want to update?')">
     </form>
+
+    <?php
+
+    }else{        
+    ?>
+        <form action="?action=create" method="POST">
+            <label for="model">Model</label>
+            <input type="text" name="model">
+
+            <label for="">Brand</label>
+            <input type="text" name="brand">
+
+            <label for="">License Plate</label>
+            <input type="text" name="licenseplate">
+
+            <label for="">Color</label>
+            <input type="text" name="color">
+
+            <label for="">Year</label>
+            <input type="text" name="year">
+
+            <input type="submit" value="Register" name="send">
+        </form>
+    <?php
+    }
+    ?>
     <table>
         <tr>
             <td>Id</td>

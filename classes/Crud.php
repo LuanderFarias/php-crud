@@ -53,11 +53,11 @@
             $color = $postValues['color'];
             $year = $postValues['year'];
 
-            if(empty($id) || empty($model) || empty($brand) || empty($licenseplate) || empty($color) || empty($year)) {
+            if (empty($id) || empty($model) || empty($brand) || empty($licenseplate) || empty($color) || empty($year)) {
                 return false;
             }
 
-            $query = "UPDATE" . $this->table_name . " SET  model = ?, SET  brand = ?, SET  licenseplate = ?, SET  color = ?, SET year = ? WHERE id = ?";
+            $query = "UPDATE " . $this->table_name . " SET model = ?, brand = ?, licenseplate = ?, color = ?, year = ? WHERE id = ?";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(1, $model);
             $stmt->bindParam(2, $brand);
@@ -65,7 +65,19 @@
             $stmt->bindParam(4, $color);
             $stmt->bindParam(5, $year);
             $stmt->bindParam(6, $id);
-            if($stmt->execute()){
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        //delete
+        public function delete($id) {
+            $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(1, $id);
+            if ($stmt->execute()) {
                 return true;
             } else {
                 return false;
